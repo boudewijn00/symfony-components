@@ -6,7 +6,7 @@ COPY . /app
 
 WORKDIR /app
 
-RUN composer install --no-dev
+RUN composer install
 
 EXPOSE 443 80
 
