@@ -1,48 +1,38 @@
 version: "3"
 services:
   app:
-    image: boudewijn00/php-fpm:latest
-    container_name: symfony-components-app
+    container_name: lad-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - 8080:80
     depends_on:
       - mysql
       - redis
-    env_file:
-      - .docker.env
-    volumes:
-      - ./:/app/www
-  nginx:
-    image: boudewijn00/nginx:latest
-    container_name: symfony-components-nginx
-    volumes:
-      - ./:/app/www
-    depends_on:
-        - app
-    environment:
-      PHP_IDE_CONFIG: "serverName=localhost"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
   mysql:
-    container_name: symfony-components-mysql
+    container_name: lad-mysql
     image: boudewijn00/mysql:latest
     volumes:
-      - symfony-components-mysql:/var/lib/mysql
-      - ./:/app
+      - lad-mysql:/var/lib/mysql
     environment:
-      MARIADB_DATABASE: symfony-components-db
+      MARIADB_DATABASE: lad-db
       MARIADB_ROOT_PASSWORD: root
-      MARIADB_USER: symfony-components-user
-      MARIADB_PASSWORD: symfony-components-password
+      MARIADB_USER: lad-user
+      MARIADB_PASSWORD: lad-password
     ports:
       - 13306:3306
   redis:
-    container_name: symfony-components-redis
+    container_name: lad-redis
     image: redis:latest
     ports:
       - 16379:6379
     volumes:
-      - symfony-components-redis:/data
+      - lad-redis:/data
 volumes:
-  symfony-components-mysql:
+  lad-mysql:
     driver: "local"
-  symfony-components-redis:
+  lad-redis:
     driver: "local"
