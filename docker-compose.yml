@@ -13,8 +13,6 @@ services:
   nginx:
     image: boudewijn00/nginx:latest
     container_name: symfony-components-nginx
-    ports:
-      - 9009:80
     volumes:
       - ./:/app/www
     depends_on:
