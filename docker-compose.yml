@@ -1,0 +1,50 @@
+version: "3"
+services:
+  app:
+    image: boudewijn00/php-fpm:latest
+    container_name: symfony-components-app
+    depends_on:
+      - mysql
+      - redis
+    env_file:
+      - .docker.env
+    volumes:
+      - ./:/app/www
+  nginx:
+    image: boudewijn00/nginx:latest
+    container_name: symfony-components-nginx
+    ports:
+      - 8001:80
+    volumes:
+      - ./:/app/www
+    depends_on:
+        - app
+    environment:
+      PHP_IDE_CONFIG: "serverName=localhost"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  mysql:
+    container_name: symfony-components-mysql
+    image: boudewijn00/mysql:latest
+    volumes:
+      - symfony-components-mysql:/var/lib/mysql
+      - ./:/app
+    environment:
+      MARIADB_DATABASE: symfony-components-db
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_USER: symfony-components-user
+      MARIADB_PASSWORD: symfony-components-password
+    ports:
+      - 13306:3306
+  redis:
+    container_name: symfony-components-redis
+    image: redis:latest
+    ports:
+      - 16379:6379
+    volumes:
+      - symfony-components-redis:/data
+volumes:
+  symfony-components-mysql:
+    driver: "local"
+  symfony-components-redis:
+    driver: "local"
